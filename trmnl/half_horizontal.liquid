@@ -1,0 +1,29 @@
+<div class="view view--half_horizontal">
+  <div class="layout layout--col gap--small">
+    <!-- Compact Header -->
+    <div class="layout layout--row items--center gap--medium border--bottom pb-1 mb-2">
+      <div class="bg--black color--white px-2 py-0.5 rounded flex items--center">
+        <span class="title">{{ route }}</span>
+      </div>
+      <div class="flex flex--grow truncate">
+        <span class="title title--small">{{ stop_name }}</span>
+      </div>
+      <span class="meta">{{ updated_at }}</span>
+    </div>
+
+    <!-- Two-column Departures (Top 6) -->
+    <div class="grid grid--cols-2 gap--medium w-full">
+      {% for departure in departures limit:6 %}
+        <div class="flex flex--row items--center justify--between border--bottom pb-1">
+          <div class="flex flex--row items--center gap--small">
+            <span class="value">{{ departure.time }}</span>
+            <span class="meta truncate" style="max-width: 120px;">{{ departure.headsign }}</span>
+          </div>
+          {% if departure.is_live and departure.delay > 2 %}
+            <span class="value value--small">+{{ departure.delay }}m</span>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
