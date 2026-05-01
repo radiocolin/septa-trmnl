@@ -8,7 +8,7 @@
     <div class="flex flex--stretch grow">
       {% for departure in departures limit:2 %}
         <div class="flex flex--col flex--center-x border rounded grow">
-          <span class="value value--large">{{ departure.time }}</span>
+          <span class="value value--base">{{ departure.time }}</span>
           <span class="label label--small">{{ departure.status }}</span>
         </div>
       {% endfor %}
@@ -16,7 +16,7 @@
     <div class="flex flex--stretch grow pb--small">
       {% for departure in departures offset:2 limit:2 %}
         <div class="flex flex--col flex--center-x border rounded grow">
-          <span class="value value--large">{{ departure.time }}</span>
+          <span class="value value--base">{{ departure.time }}</span>
           <span class="label label--small">{{ departure.status }}</span>
         </div>
       {% endfor %}
