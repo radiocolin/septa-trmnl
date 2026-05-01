@@ -1,3 +1,4 @@
+import { appendFileSync } from 'fs';
 import { getDepartures, getRouteInfo, getStopInfo } from './septa';
 import { Departure, TrmnlPayload } from './types';
 import { format } from 'date-fns';
@@ -8,11 +9,7 @@ const SEPTA_ROUTE = process.env.SEPTA_ROUTE || "17";
 const SEPTA_STOP = process.env.SEPTA_STOP || "10264";
 const TIMEZONE = "America/New_York";
 
-function formatDepartureTime(etaSecs: number, scheduled: string): string {
-  const mins = Math.floor(etaSecs / 60);
-  if (mins <= 0) return "Now";
-  if (mins < 60) return `${mins}m`;
-
+function formatDepartureTime(scheduled: string): string {
   const parts = scheduled.split(":");
   let h = parseInt(parts[0]);
   const m = parts[1];
@@ -48,7 +45,7 @@ async function main() {
       stop_name: stopInfo?.stop_name || "Unknown Stop",
       updated_at: format(now, "h:mma").toLowerCase(),
       departures: departures.map(d => {
-        let status = "";
+        let status = "Scheduled";
         if (d.is_live) {
           if (d.stops_away !== null) {
             if (d.stops_away <= 0) status = "Approaching";
@@ -60,7 +57,7 @@ async function main() {
         }
 
         return {
-          time: formatDepartureTime(d.eta_secs, d.scheduled),
+          time: formatDepartureTime(d.scheduled),
           headsign: d.headsign,
           status: status,
           is_live: d.is_live,
@@ -80,6 +77,12 @@ async function main() {
 
     if (response.ok) {
       console.log("Success! TRMNL updated.");
+
+      if (process.env.GITHUB_OUTPUT && departures.length > 0) {
+        const delaySecs = Math.min(3600, Math.max(60, Math.round(departures[0].eta_secs) + 120));
+        appendFileSync(process.env.GITHUB_OUTPUT, `next_run_delay=${delaySecs}\n`);
+        console.log(`Next run in ${delaySecs}s (2 min after top departure).`);
+      }
     } else {
       console.error(`Error: TRMNL API returned ${response.status}`);
       const text = await response.text();

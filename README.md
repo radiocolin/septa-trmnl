@@ -11,7 +11,11 @@ This project uses a Node.js script to fetch real-time data from SEPTA and pushes
 1. Log in to your [TRMNL Dashboard](https://trmnl.com).
 2. Go to **Plugins** -> **Private Plugins** -> **Add New**.
 3. Choose **Custom Endpoint**.
-4. **Markup**: Copy and paste the contents of `trmnl/layout.liquid` into the Markup editor.
+4. **Markup**: 
+   - Paste `trmnl/full.liquid` into the **Full** tab.
+   - Paste `trmnl/half_horizontal.liquid` into the **Half Horizontal** tab.
+   - Paste `trmnl/half_vertical.liquid` into the **Half Vertical** tab.
+   - Paste `trmnl/quadrant.liquid` into the **Quadrant** tab.
 5. Save the plugin.
 6. Note your **Webhook URL** (e.g., `https://trmnl.com/api/custom_plugins/abcd-1234`).
 

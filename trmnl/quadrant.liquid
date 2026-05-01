@@ -1,22 +1,23 @@
 <div class="view view--quadrant">
-  <div class="layout layout--col gap--small">
-    <div class="layout layout--row items--center justify--between border--bottom pb-1 mb-1">
-      <div class="bg--black color--white px-1.5 py-0.5 rounded">
-        <span class="title title--small">{{ route }}</span>
-      </div>
-      <span class="meta">{{ updated_at }}</span>
-    </div>
+  <div class="title_bar">
+    <span class="title">{{ route }}</span>
+    <span class="instance">{{ updated_at }}</span>
+  </div>
 
-    <div class="layout layout--col">
-      {% for departure in departures limit:4 %}
-        <div class="layout layout--col border--bottom pb-0.5 mb-1">
-          <div class="layout layout--row items--center justify--between">
-            <span class="value">{{ departure.time }}</span>
-            {% if departure.is_live and departure.delay > 2 %}
-              <span class="meta font--bold">+{{ departure.delay }}m</span>
-            {% endif %}
-          </div>
-          <span class="meta truncate">{{ departure.headsign }}</span>
+  <div class="layout layout--col layout--stretch">
+    <div class="flex flex--stretch grow">
+      {% for departure in departures limit:2 %}
+        <div class="flex flex--col flex--center-x border rounded grow">
+          <span class="value value--large">{{ departure.time }}</span>
+          <span class="label label--small">{{ departure.status }}</span>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="flex flex--stretch grow">
+      {% for departure in departures offset:2 limit:2 %}
+        <div class="flex flex--col flex--center-x border rounded grow">
+          <span class="value value--large">{{ departure.time }}</span>
+          <span class="label label--small">{{ departure.status }}</span>
         </div>
       {% endfor %}
     </div>

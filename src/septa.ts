@@ -25,7 +25,8 @@ export async function getRouteInfo(routeId: string): Promise<SeptaRoute | null> 
     const response = await fetch(`${API_V2}/routes/`);
     if (!response.ok) return null;
     const routes = await response.json() as SeptaRoute[];
-    return routes.find(r => r.route_id === routeId) || null;
+    const normalizedRouteId = routeId.toString().trim();
+    return routes.find(r => r.route_id.toString().trim() === normalizedRouteId) || null;
   } catch (error) {
     console.error("Error fetching route info:", error);
     return null;
@@ -34,10 +35,11 @@ export async function getRouteInfo(routeId: string): Promise<SeptaRoute | null> 
 
 export async function getStopInfo(routeId: string, stopId: string): Promise<SeptaStop | null> {
   try {
-    const response = await fetch(`${API_FLAT}/stops/${routeId}/stops.json`);
+    const response = await fetch(`${API_FLAT}/stops/${routeId.toString().trim()}/stops.json`);
     if (!response.ok) return null;
     const stops = await response.json() as SeptaStop[];
-    return stops.find(s => s.stop_id === stopId) || null;
+    const normalizedStopId = stopId.toString().trim();
+    return stops.find(s => s.stop_id.toString().trim() === normalizedStopId) || null;
   } catch (error) {
     console.error("Error fetching stop info:", error);
     return null;

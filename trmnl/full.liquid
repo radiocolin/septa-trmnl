@@ -1,55 +1,25 @@
 <div class="view view--full">
-  <!-- Header -->
-  <div class="layout layout--col layout--top layout--left">
-    <div class="layout layout--row items--center gap--medium border--bottom pb-2 mb-4 w-full">
-      <div class="bg--black color--white p-2 rounded flex items--center justify--center" style="min-width: 60px;">
-        <span class="title title--large">{{ route }}</span>
-      </div>
-      <div class="flex flex--col flex--grow">
-        <span class="title title--medium">{{ stop_name }}</span>
-        <span class="meta">Updated {{ updated_at }}</span>
-      </div>
-    </div>
+  <div class="title_bar">
+    <span class="title">Route {{ route }} &nbsp;&bull;&nbsp; {{ stop_name }}</span>
+    <span class="instance">Updated {{ updated_at }}</span>
+  </div>
 
-    <!-- Departures List -->
-    <div class="layout layout--col w-full">
-      {% for departure in departures %}
-        <div class="grid grid--cols-12 gap--medium border--bottom pb-2 mb-2 items--center">
-          <!-- Time and Live Indicator (Span 3) -->
-          <div class="col--span-3 flex flex--col">
-            <span class="value value--large">{{ departure.time }}</span>
-            <div class="flex flex--row items--center gap--small">
-              {% if departure.is_live %}
-                <div class="bg--black rounded-full" style="width: 8px; height: 8px;"></div>
-                <span class="meta uppercase">{{ departure.status }}</span>
-              {% else %}
-                <span class="meta italic">Scheduled</span>
-              {% endif %}
-            </div>
-          </div>
-          
-          <!-- Headsign (Span 7) -->
-          <div class="col--span-7">
-            <span class="title title--small truncate">{{ departure.headsign }}</span>
-          </div>
-
-          <!-- Delay (Span 2) -->
-          <div class="col--span-2 text--right">
-            {% if departure.is_live and departure.delay > 2 %}
-              <span class="value">+{{ departure.delay }}m</span>
-            {% endif %}
-          </div>
-        </div>
-      {% else %}
-        <div class="flex items--center justify--center" style="height: 300px;">
-          <span class="meta italic text-3xl">No upcoming departures</span>
+  <div class="layout layout--col layout--stretch">
+    <div class="flex flex--stretch grow">
+      {% for departure in departures limit:2 %}
+        <div class="flex flex--col flex--center-x border rounded grow">
+          <span class="value value--xlarge">{{ departure.time }}</span>
+          <span class="label">{{ departure.status }}</span>
         </div>
       {% endfor %}
     </div>
-
-    <!-- Footer -->
-    <div class="mt-auto w-full text--center pb-2">
-      <span class="meta italic">SEPTA Real-time Data</span>
+    <div class="flex flex--stretch grow">
+      {% for departure in departures offset:2 limit:2 %}
+        <div class="flex flex--col flex--center-x border rounded grow">
+          <span class="value value--xlarge">{{ departure.time }}</span>
+          <span class="label">{{ departure.status }}</span>
+        </div>
+      {% endfor %}
     </div>
   </div>
 </div>

@@ -1,31 +1,15 @@
 <div class="view view--half_vertical">
-  <div class="layout layout--col gap--medium">
-    <div class="layout layout--row items--center gap--small border--bottom pb-2 mb-2">
-      <div class="bg--black color--white px-3 py-1 rounded">
-        <span class="title title--medium">{{ route }}</span>
+  <div class="title_bar">
+    <span class="title">Route {{ route }} &nbsp;&bull;&nbsp; {{ stop_name }}</span>
+    <span class="instance">{{ updated_at }}</span>
+  </div>
+
+  <div class="layout layout--col layout--stretch">
+    {% for departure in departures limit:4 %}
+      <div class="flex flex--col flex--center-x border rounded grow">
+        <span class="value value--large">{{ departure.time }}</span>
+        <span class="label label--small">{{ departure.status }}</span>
       </div>
-      <span class="title title--small flex--grow truncate">{{ stop_name }}</span>
-    </div>
-
-    <div class="layout layout--col gap--small">
-      {% for departure in departures limit:8 %}
-        <div class="layout layout--col border--bottom pb-1">
-          <div class="layout layout--row items--center justify--between">
-            <span class="value value--large">{{ departure.time }}</span>
-            {% if departure.is_live and departure.delay > 2 %}
-              <span class="value">+{{ departure.delay }}m</span>
-            {% endif %}
-          </div>
-          <span class="title title--small truncate">{{ departure.headsign }}</span>
-          <span class="meta italic">
-            {% if departure.is_live %}{{ departure.status }}{% else %}Scheduled{% endif %}
-          </span>
-        </div>
-      {% endfor %}
-    </div>
-
-    <div class="mt-auto text--center">
-      <span class="meta">Updated {{ updated_at }}</span>
-    </div>
+    {% endfor %}
   </div>
 </div>

@@ -2,30 +2,43 @@ name: Update TRMNL
 
 on:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '*/30 * * * *'  # Fallback in case self-scheduling fails
   workflow_dispatch:
+
+permissions:
+  actions: write
 
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
-          
+
       - name: Install Dependencies
         run: npm install
-        
+
       - name: Build
         run: npm run build
-        
+
       - name: Update TRMNL
+        id: update
         run: npm run update
         env:
           TRMNL_WEBHOOK_URL: ${{ secrets.TRMNL_WEBHOOK_URL }}
           SEPTA_ROUTE: ${{ vars.SEPTA_ROUTE }}
           SEPTA_STOP: ${{ vars.SEPTA_STOP }}
+
+      - name: Schedule next run
+        if: steps.update.outputs.next_run_delay != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Sleeping ${{ steps.update.outputs.next_run_delay }}s until next run..."
+          sleep ${{ steps.update.outputs.next_run_delay }}
+          gh workflow run update.yml
