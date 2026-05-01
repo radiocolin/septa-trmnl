@@ -1,7 +1,7 @@
 <div class="view view--quadrant">
   <div class="title_bar">
-    <span class="title">{{ route }}</span>
-    <span class="instance">{{ updated_at }}</span>
+    <span class="title">Route {{ route }}</span>
+    <span class="instance">as of {{ updated_at }}</span>
   </div>
 
   <div class="layout layout--col layout--stretch">
@@ -13,7 +13,7 @@
         </div>
       {% endfor %}
     </div>
-    <div class="flex flex--stretch grow">
+    <div class="flex flex--stretch grow pb--small">
       {% for departure in departures offset:2 limit:2 %}
         <div class="flex flex--col flex--center-x border rounded grow">
           <span class="value value--large">{{ departure.time }}</span>

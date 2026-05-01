@@ -1,4 +1,3 @@
-import { appendFileSync } from 'fs';
 import { getDepartures, getRouteInfo, getStopInfo } from './septa';
 import { Departure, TrmnlPayload } from './types';
 import { format } from 'date-fns';
@@ -77,12 +76,6 @@ async function main() {
 
     if (response.ok) {
       console.log("Success! TRMNL updated.");
-
-      if (process.env.GITHUB_OUTPUT && departures.length > 0) {
-        const delaySecs = Math.min(3600, Math.max(60, Math.round(departures[0].eta_secs) + 120));
-        appendFileSync(process.env.GITHUB_OUTPUT, `next_run_delay=${delaySecs}\n`);
-        console.log(`Next run in ${delaySecs}s (2 min after top departure).`);
-      }
     } else {
       console.error(`Error: TRMNL API returned ${response.status}`);
       const text = await response.text();
