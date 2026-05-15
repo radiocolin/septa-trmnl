@@ -71,7 +71,7 @@ export async function getDepartures(route: string, stopId: string): Promise<Depa
     if (rTrips.ok) {
       const trips = await rTrips.json() as SeptaLiveTrip[];
       for (const t of trips) {
-        liveData[t.trip_id] = t;
+        liveData[t.trip_id.toString()] = t;
       }
     }
   } catch (error) {
@@ -81,8 +81,9 @@ export async function getDepartures(route: string, stopId: string): Promise<Depa
   // 3. Infer Today's service_id
   const serviceIdCounts: Record<string, number> = {};
   for (const s of fullSchedule) {
-    if (liveData[s.trip_id]) {
-      const svcId = s.service_id;
+    const tid = s.trip_id.toString();
+    if (liveData[tid]) {
+      const svcId = s.service_id.toString();
       serviceIdCounts[svcId] = (serviceIdCounts[svcId] || 0) + 1;
     }
   }
@@ -99,7 +100,7 @@ export async function getDepartures(route: string, stopId: string): Promise<Depa
   if (!todayServiceId) {
     const counts: Record<string, number> = {};
     for (const s of fullSchedule) {
-      const sid = s.service_id;
+      const sid = s.service_id.toString();
       counts[sid] = (counts[sid] || 0) + 1;
     }
     let bestSid: string | null = null;
@@ -116,9 +117,9 @@ export async function getDepartures(route: string, stopId: string): Promise<Depa
   // 4. Deduplicate and Filter
   const uniqueTrips: Record<string, SeptaScheduleEntry> = {};
   for (const s of fullSchedule) {
-    if (s.service_id !== todayServiceId) continue;
+    if (s.service_id.toString() !== todayServiceId) continue;
 
-    const tid = s.trip_id;
+    const tid = s.trip_id.toString();
     if (!uniqueTrips[tid] || (s.release_name || "") > (uniqueTrips[tid].release_name || "")) {
       uniqueTrips[tid] = s;
     }
@@ -126,13 +127,14 @@ export async function getDepartures(route: string, stopId: string): Promise<Depa
 
   const results: Departure[] = [];
   for (const s of Object.values(uniqueTrips)) {
+    const tid = s.trip_id.toString();
     const schedSecs = parseTimeToSeconds(s.arrival_time);
     let delay = 0;
     let isLive = false;
     let stopsAway: number | null = null;
 
-    if (liveData[s.trip_id]) {
-      const live = liveData[s.trip_id];
+    if (liveData[tid]) {
+      const live = liveData[tid];
       if (live.status !== "NO GPS" && live.delay !== null && Math.abs(live.delay) < 120) {
         if (live.next_stop_sequence !== undefined && live.next_stop_sequence !== null) {
           if (Number(live.next_stop_sequence) > Number(s.stop_sequence)) {
