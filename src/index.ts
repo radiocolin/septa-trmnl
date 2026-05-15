@@ -66,6 +66,7 @@ async function main() {
     }
   };
 
+  console.log("Generated Payload:", JSON.stringify(payload, null, 2));
   console.log("Sending payload to TRMNL...");
   try {
     const response = await fetch(TRMNL_WEBHOOK_URL, {
@@ -75,7 +76,8 @@ async function main() {
     });
 
     if (response.ok) {
-      console.log("Success! TRMNL updated.");
+      const responseData = await response.json();
+      console.log("Success! TRMNL updated. Response:", JSON.stringify(responseData, null, 2));
     } else {
       console.error(`Error: TRMNL API returned ${response.status}`);
       const text = await response.text();
